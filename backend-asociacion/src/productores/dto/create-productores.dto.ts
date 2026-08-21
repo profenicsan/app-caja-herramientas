@@ -1,23 +1,24 @@
-import {IsString, IsNotEmpty, IsOptional} from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateProductoresDto {
-    @IsString()
-    @IsNotEmpty()
-    cedula!: string;
+  @ApiProperty({ example: '123456789', description: 'Documento del agricultor' })
+  @IsString()
+  @IsNotEmpty()
+  cedula!: string;
 
-    @IsString()
-    @IsNotEmpty()
-    nombre_completo!: string;
+  @ApiProperty({ example: 'Juan Agricultor', description: 'Nombre completo' })
+  @IsString()
+  @IsNotEmpty()
+  nombre_completo!: string;
 
-    @IsString()
-    @IsOptional()
-    direccion!: string;
+  @ApiPropertyOptional({ example: 'La Florida' })
+  @IsString()
+  @IsOptional()
+  direccion!: string;
 
-    @IsString()
-    @IsOptional()
-    telefono!: string;
-
-    @IsString()
-    @IsNotEmpty()
-    password_hash!: string;
+  @ApiPropertyOptional({ example: '3011705619' })
+  @IsString()
+  @IsOptional()
+  telefono!: string;
 }

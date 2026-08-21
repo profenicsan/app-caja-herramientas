@@ -39,8 +39,8 @@ export class ProductoresService {
     // 5. Retornar el resultado al panel de administración
     return {
       mensaje: 'Productor registrado con éxito',
-      cedula: nuevoProductor.cedula,
-      pin_generado: pinTemporal, // Única vez que se muestra sin encriptar
+      cedula: createProductoresDto.cedula, 
+      pin_generado: pinTemporal,
     };
   }
 }
