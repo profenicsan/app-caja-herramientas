@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Alert, Modal, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import * as DocumentPicker from 'expo-document-picker'; // <-- NUEVA LIBRERÍA IMPORTADA
+import * as DocumentPicker from 'expo-document-picker';
+import { WebView } from 'react-native-webview'; // <-- NUEVA LIBRERÍA
 
 import CargandoPlanta from './CargandoPlanta';
 
@@ -18,22 +19,31 @@ const TarjetaAlerta = ({ titulo, fecha, estado, icono }: any) => (
   </View>
 );
 
-const ItemDocumento = ({ nombre, fechaCarga }: any) => (
-  <View style={styles.itemDocumento}>
+const ItemDocumento = ({ nombre, fechaCarga, alPresionar }: any) => (
+  <TouchableOpacity style={styles.itemDocumento} onPress={alPresionar}>
     <FontAwesome5 name="file-pdf" size={24} color="#00615C" />
     <View style={styles.infoDocumento}>
       <Text style={styles.nombreDocumento}>{nombre}</Text>
       <Text style={styles.fechaCarga}>Cargado: {fechaCarga}</Text>
     </View>
-    <TouchableOpacity>
-      <FontAwesome5 name="download" size={20} color="#666" />
-    </TouchableOpacity>
-  </View>
+    <View style={styles.botonVer}>
+      <FontAwesome5 name="eye" size={16} color="#00615C" />
+    </View>
+  </TouchableOpacity>
 );
 
 export default function ModuloTributario() {
   const navigation = useNavigation<any>();
   const [estaCargando, setEstaCargando] = useState(true);
+  
+  const [documentos, setDocumentos] = useState<any[]>([
+    { id: '1', nombre: 'RUT_Actualizado_2026.pdf', fechaCarga: '02/09/2026', uri: null },
+    { id: '2', nombre: 'Certificado_Representacion.pdf', fechaCarga: '15/08/2026', uri: null },
+    { id: '3', nombre: 'Resolucion_Facturacion.pdf', fechaCarga: '10/01/2026', uri: null }
+  ]);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [docActual, setDocActual] = useState<any>(null);
 
   useEffect(() => {
     const temporizador = setTimeout(() => {
@@ -42,27 +52,38 @@ export default function ModuloTributario() {
     return () => clearTimeout(temporizador);
   }, []);
 
-  // LÓGICA REAL PARA SUBIR ARCHIVOS
   const manejarSubida = async () => {
     try {
       const resultado = await DocumentPicker.getDocumentAsync({
-        // Filtramos para que solo deje subir PDFs e imágenes
         type: ['application/pdf', 'image/jpeg', 'image/png'], 
         copyToCacheDirectory: true,
       });
 
       if (!resultado.canceled) {
         const archivo = resultado.assets[0];
-        // Mostramos una alerta confirmando que atrapamos el archivo
-        Alert.alert(
-          "¡Archivo Seleccionado!",
-          `Has elegido: ${archivo.name}\n\n(Este es el archivo que enviaremos a la IA de NestJS en nuestra próxima sesión)`
-        );
+
+        const fechaHoy = new Date().toLocaleDateString('es-CO', {
+          day: '2-digit', month: '2-digit', year: 'numeric'
+        });
+
+        const nuevoDocumento = {
+          id: Date.now().toString(), 
+          nombre: archivo.name,
+          fechaCarga: fechaHoy,
+          uri: archivo.uri
+        };
+
+        setDocumentos([nuevoDocumento, ...documentos]);
       }
     } catch (error) {
       console.error("Error al seleccionar documento:", error);
       Alert.alert("Error", "Hubo un problema al intentar abrir los archivos.");
     }
+  };
+
+  const abrirDocumento = (doc: any) => {
+    setDocActual(doc);
+    setModalVisible(true);
   };
 
   if (estaCargando) {
@@ -83,18 +104,8 @@ export default function ModuloTributario() {
       <ScrollView style={styles.scrollArea} showsVerticalScrollIndicator={false}>
         
         <Text style={styles.tituloSeccion}>Próximos Vencimientos</Text>
-        <TarjetaAlerta 
-          titulo="Renovación Cámara de Comercio" 
-          fecha="31 de Marzo, 2027" 
-          estado="advertencia" 
-          icono="building" 
-        />
-        <TarjetaAlerta 
-          titulo="Declaración IVA Bimestral" 
-          fecha="15 de Septiembre, 2026" 
-          estado="urgente" 
-          icono="exclamation-triangle" 
-        />
+        <TarjetaAlerta titulo="Renovación Cámara de Comercio" fecha="31 de Marzo, 2027" estado="advertencia" icono="building" />
+        <TarjetaAlerta titulo="Declaración IVA Bimestral" fecha="15 de Septiembre, 2026" estado="urgente" icono="exclamation-triangle" />
 
         <View style={styles.encabezadoBoveda}>
           <Text style={styles.tituloSeccion}>Bóveda Digital</Text>
@@ -111,14 +122,66 @@ export default function ModuloTributario() {
         </TouchableOpacity>
 
         <View style={styles.tarjeta}>
-          <ItemDocumento nombre="RUT_Actualizado_2026.pdf" fechaCarga="02/09/2026" />
-          <View style={styles.divisor} />
-          <ItemDocumento nombre="Certificado_Representacion.pdf" fechaCarga="15/08/2026" />
-          <View style={styles.divisor} />
-          <ItemDocumento nombre="Resolucion_Facturacion.pdf" fechaCarga="10/01/2026" />
+          {documentos.map((doc, index) => (
+            <React.Fragment key={doc.id}>
+              <ItemDocumento 
+                nombre={doc.nombre} 
+                fechaCarga={doc.fechaCarga} 
+                alPresionar={() => abrirDocumento(doc)}
+              />
+              {index < documentos.length - 1 && <View style={styles.divisor} />}
+            </React.Fragment>
+          ))}
         </View>
 
       </ScrollView>
+
+      <Modal visible={modalVisible} animationType="slide" transparent={false}>
+        <SafeAreaView style={styles.modalContenedor}>
+          
+          <View style={styles.modalEncabezado}>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.botonVolver}>
+              <FontAwesome5 name="times" size={24} color="#333333" />
+            </TouchableOpacity>
+            <Text style={styles.tituloPantalla} numberOfLines={1} ellipsizeMode="middle">
+              {docActual?.nombre || 'Documento'}
+            </Text>
+            <View style={{ width: 24 }} />
+          </View>
+
+          {/* VISOR DE PDF FUNCIONAL */}
+          <View style={styles.modalCuerpoVisor}>
+            {docActual?.uri ? (
+              Platform.OS === 'web' ? (
+                // Lógica exclusiva para que corra perfecto en tu navegador web
+                React.createElement('iframe', {
+                  src: docActual.uri,
+                  style: { width: '100%', height: '100%', border: 'none' }
+                })
+              ) : (
+                // Lógica exclusiva para cuando abras la app en tu celular
+                <WebView 
+                  source={{ uri: docActual.uri }} 
+                  style={{ flex: 1, width: '100%', height: '100%' }} 
+                  originWhitelist={['*']}
+                  allowFileAccess={true}
+                  allowUniversalAccessFromFileURLs={true}
+                />
+              )
+            ) : (
+              <View style={styles.modalCuerpoVacio}>
+                <FontAwesome5 name="file-pdf" size={80} color="#B0BEC5" />
+                <Text style={styles.modalTituloMensaje}>Documento de Prueba</Text>
+                <Text style={styles.modalTextoExplicativo}>
+                  Este es un documento predeterminado sin archivo físico. Sube un documento real usando el botón de carga para visualizarlo aquí.
+                </Text>
+              </View>
+            )}
+          </View>
+
+        </SafeAreaView>
+      </Modal>
+
     </SafeAreaView>
   );
 }
@@ -127,7 +190,7 @@ const styles = StyleSheet.create({
   contenedorPrincipal: { flex: 1, backgroundColor: '#F4F6F8' },
   encabezado: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#FFFFFF', padding: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, elevation: 3 },
   botonVolver: { padding: 5 },
-  tituloPantalla: { fontSize: 20, fontWeight: 'bold', color: '#00615C' },
+  tituloPantalla: { fontSize: 20, fontWeight: 'bold', color: '#00615C', flex: 1, textAlign: 'center', marginHorizontal: 10 },
   scrollArea: { padding: 20 },
   tituloSeccion: { fontSize: 18, fontWeight: 'bold', color: '#333333', marginBottom: 15, marginTop: 10 },
   encabezadoBoveda: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 20, marginBottom: 15 },
@@ -142,9 +205,16 @@ const styles = StyleSheet.create({
   infoAlerta: { marginLeft: 15 },
   tituloAlerta: { fontSize: 16, fontWeight: 'bold', color: '#333333' },
   fechaAlerta: { fontSize: 14, color: '#666666', marginTop: 5 },
-  itemDocumento: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 },
+  itemDocumento: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 },
   infoDocumento: { flex: 1, marginLeft: 15 },
   nombreDocumento: { fontSize: 15, fontWeight: '600', color: '#333333' },
   fechaCarga: { fontSize: 12, color: '#888888', marginTop: 3 },
+  botonVer: { backgroundColor: 'rgba(0, 97, 92, 0.1)', padding: 8, borderRadius: 8 },
   divisor: { height: 1, backgroundColor: '#E0E0E0', marginVertical: 5 },
+  modalContenedor: { flex: 1, backgroundColor: '#F4F6F8' },
+  modalEncabezado: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#FFFFFF', padding: 20, borderBottomWidth: 1, borderBottomColor: '#E0E0E0' },
+  modalCuerpoVisor: { flex: 1, backgroundColor: '#E0E0E0' },
+  modalCuerpoVacio: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 30, backgroundColor: '#F4F6F8' },
+  modalTituloMensaje: { fontSize: 22, fontWeight: 'bold', color: '#333333', marginTop: 20, marginBottom: 10 },
+  modalTextoExplicativo: { fontSize: 16, color: '#666666', textAlign: 'center', marginBottom: 30, lineHeight: 24 }
 });

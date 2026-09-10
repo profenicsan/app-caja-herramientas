@@ -89,7 +89,7 @@ export default function Login() {
           placeholderTextColor="#888"
           value={cedula}
           onChangeText={setCedula}
-          keyboardType="numeric"
+          keyboardType="default"
         />
 
         <Text style={styles.label}>Contraseña *</Text>
@@ -100,7 +100,7 @@ export default function Login() {
           value={pin}
           onChangeText={setPin}
           secureTextEntry
-          keyboardType="numeric"
+          keyboardType="default"
         />
 
         <TouchableOpacity style={styles.botonPrimario} onPress={manejarLogin}>
@@ -114,7 +114,7 @@ export default function Login() {
   );
 }
 
-// 4. BLOQUE DE ESTILOS (El que estaba faltando)
+// 4. BLOQUE DE ESTILOS
 const styles = StyleSheet.create({
   fondoGlobal: {
     flex: 1,
