@@ -33,10 +33,19 @@ export default function PanelAdministrador() {
             <Text style={styles.tituloSidebar}>AgroAsoc</Text>
           </View>
           
-          <OpcionMenu icono="building" texto="Perfil Asociación" />
+          {/* Opciones del menú adaptadas al nuevo esquema */}
+          <OpcionMenu icono="id-card" texto="Perfil Asociación" />
           <OpcionMenu icono="users" texto="Productores" />
           <OpcionMenu icono="tractor" texto="Inventario Productivo" />
-          <OpcionMenu icono="file-invoice-dollar" texto="Gestión Contable" />
+          
+          {/* Módulos Financieros y Legales */}
+          <OpcionMenu icono="file-invoice-dollar" texto="Transacciones y Costos" />
+          <OpcionMenu 
+            icono="building" 
+            texto="Bóveda y Legal DIAN" 
+            accion={() => navigation.navigate('ModuloTributario')} 
+          />
+          
           <OpcionMenu icono="bullhorn" texto="Mercadeo" />
         </View>
 

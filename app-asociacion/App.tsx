@@ -2,9 +2,11 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+//Importación de pantallas
 import Login from './pantallas/login';
 import ListaProductores from './pantallas/ListaProductores';
 import PanelAdministracion from './pantallas/PanelAdministracion';
+import ModuloTributario from './pantallas/ModuloTributario';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +27,12 @@ export default function App() {
           name="PanelAdministracion"
           component={PanelAdministracion}
           options={{ headerShown: false }} 
+        />
+
+        <Stack.Screen
+        name="ModuloTributario"
+        component={ModuloTributario}
+        options={{ headerShown: false }}
         />
 
         {/* Pantalla con la lista que conecta a la base de datos */}
