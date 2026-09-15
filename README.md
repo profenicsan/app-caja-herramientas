@@ -59,3 +59,25 @@ Se construyó la pantalla `ModuloTributario.tsx` con las siguientes característ
 ### 📦 Nuevas Dependencias Instaladas
 * `expo-document-picker`: Para el acceso al sistema de archivos del dispositivo.
 * `react-native-webview`: Para la visualización nativa de documentos en dispositivos móviles.
+
+### 4. Gestión de Productores (Directorio)
+* **Control de Asociados:** Interfaz lista para listar y registrar productores, alineada a la estructura SQL con campos específicos como Nombre de la Finca, Hectáreas y Vereda.
+* **Personalización Visual:** Integración de la librería `expo-image-picker` para permitir la carga y asignación de fotografías de perfil por cada agricultor.
+
+### 5. Perfil de la Asociación
+* **Identidad Institucional:** Interfaz dedicada para visualizar y editar información clave (NIT, contacto, ubicación y línea productiva).
+* **Gestión de Marca:** Funcionalidad dinámica para modificar el logo y el banner principal de la asociación accediendo a la galería del dispositivo.
+
+### 6. Módulo de Transacciones y Costos (Finanzas)
+* **Tablero Financiero:** Dashboard integrado que calcula en tiempo real el balance neto (Ingresos vs Costos/Egresos).
+* **Lógica Contable Automatizada:** Formulario de registro adaptado a la lógica de negocio en Excel. Incluye cálculos automáticos de importe para ingresos `(Cantidad × Precio) + Envío` y categorización de gastos.
+
+### 🛠 Mejoras Técnicas, UX y Solución de Bugs
+* **Panel Responsivo:** Refactorización del Menú Lateral (Sidebar) en `PanelAdministracion.tsx`, implementando un menú tipo "hamburguesa" retráctil para pantallas móviles (teléfonos) y fijo para tablets/PC.
+* **Visor de PDFs Nativo (Android/iOS):** Se solucionó el bloqueo de seguridad de Android al abrir archivos locales. Se integraron `expo-file-system/legacy` y `expo-sharing` para generar copias seguras en caché y utilizar el lector de PDF nativo del dispositivo.
+* **Carga Unificada:** Despliegue global del componente de transición `<CargandoPlanta />` en todas las pantallas operativas.
+* **Identidad Visual UTP/EPSEA:** Unificación de los logos institucionales en un solo recurso gráfico (`logo-utp-epsea.png`) adaptable y responsivo en la franja inferior del menú.
+
+---
+**🔜 Próximos Pasos (Fase Backend):**
+El Frontend se encuentra operativamente estructurado. La siguiente etapa consiste en la construcción del servidor utilizando **NestJS** y la conexión con la base de datos **SQL** para dotar a estos módulos de persistencia real de datos.
