@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Ale
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
-import { WebView } from 'react-native-webview'; // <-- NUEVA LIBRERÍA
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system/legacy'; // <-- EL CAMBIO ESTÁ AQUÍ AL FINAL
 
 import CargandoPlanta from './CargandoPlanta';
 
@@ -61,7 +62,6 @@ export default function ModuloTributario() {
 
       if (!resultado.canceled) {
         const archivo = resultado.assets[0];
-
         const fechaHoy = new Date().toLocaleDateString('es-CO', {
           day: '2-digit', month: '2-digit', year: 'numeric'
         });
@@ -81,9 +81,42 @@ export default function ModuloTributario() {
     }
   };
 
-  const abrirDocumento = (doc: any) => {
-    setDocActual(doc);
-    setModalVisible(true);
+  const abrirDocumento = async (doc: any) => {
+    if (!doc.uri) {
+      setDocActual(doc);
+      setModalVisible(true);
+      return;
+    }
+
+    if (Platform.OS === 'web') {
+      setDocActual(doc);
+      setModalVisible(true);
+    } else {
+      try {
+        const fs: any = FileSystem; 
+        
+        const nombreLimpio = doc.nombre.replace(/[^a-zA-Z0-9.]/g, '_');
+        
+        const directorioBase = fs.cacheDirectory || 'file:///';
+        const rutaSegura = `${directorioBase}${nombreLimpio}`; 
+        
+        await fs.copyAsync({
+          from: doc.uri,
+          to: rutaSegura
+        });
+
+        const puedeCompartir = await Sharing.isAvailableAsync();
+        if (puedeCompartir) {
+          await Sharing.shareAsync(rutaSegura, {
+            mimeType: 'application/pdf',
+            dialogTitle: 'Abrir PDF'
+          });
+        }
+      } catch (error: any) {
+        console.error("Error detallado:", error);
+        Alert.alert("Detalle del Error", error.message || "No se pudo abrir el documento.");
+      }
+    }
   };
 
   if (estaCargando) {
@@ -149,25 +182,12 @@ export default function ModuloTributario() {
             <View style={{ width: 24 }} />
           </View>
 
-          {/* VISOR DE PDF FUNCIONAL */}
           <View style={styles.modalCuerpoVisor}>
-            {docActual?.uri ? (
-              Platform.OS === 'web' ? (
-                // Lógica exclusiva para que corra perfecto en tu navegador web
-                React.createElement('iframe', {
-                  src: docActual.uri,
-                  style: { width: '100%', height: '100%', border: 'none' }
-                })
-              ) : (
-                // Lógica exclusiva para cuando abras la app en tu celular
-                <WebView 
-                  source={{ uri: docActual.uri }} 
-                  style={{ flex: 1, width: '100%', height: '100%' }} 
-                  originWhitelist={['*']}
-                  allowFileAccess={true}
-                  allowUniversalAccessFromFileURLs={true}
-                />
-              )
+            {docActual?.uri && Platform.OS === 'web' ? (
+              React.createElement('iframe', {
+                src: docActual.uri,
+                style: { width: '100%', height: '100%', border: 'none' }
+              })
             ) : (
               <View style={styles.modalCuerpoVacio}>
                 <FontAwesome5 name="file-pdf" size={80} color="#B0BEC5" />
