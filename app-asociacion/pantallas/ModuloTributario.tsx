@@ -142,7 +142,8 @@ export default function ModuloTributario() {
 
         <View style={styles.encabezadoBoveda}>
           <Text style={styles.tituloSeccion}>Bóveda Digital</Text>
-          <TouchableOpacity style={styles.botonIA}>
+          {/* AQUÍ ESTÁ EL AJUSTE DE NAVEGACIÓN */}
+          <TouchableOpacity style={styles.botonIA} onPress={() => navigation.navigate('AsistenteIA')}>
             <FontAwesome5 name="robot" size={16} color="#FFF" style={{ marginRight: 8 }} />
             <Text style={styles.textoBotonIA}>Analizar con IA</Text>
           </TouchableOpacity>
