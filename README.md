@@ -81,3 +81,23 @@ Se construyó la pantalla `ModuloTributario.tsx` con las siguientes característ
 ---
 **🔜 Próximos Pasos (Fase Backend):**
 El Frontend se encuentra operativamente estructurado. La siguiente etapa consiste en la construcción del servidor utilizando **NestJS** y la conexión con la base de datos **SQL** para dotar a estos módulos de persistencia real de datos.
+
+### 7. Panel del Productor (Operación en Campo)
+* **Interfaz UX/UI Adaptada:** Dashboard diseñado específicamente para el agricultor, con tipografía clara y accesos rápidos a utilidades diarias.
+* **Seguimiento de Cultivos:** Indicadores visuales (barras de progreso) para monitorear el estado actual de la siembra o cosecha.
+
+### 8. Inteligencia Artificial Local (Seguridad y Privacidad)
+* **Motor de Inferencia Soberano:** Integración con **Ollama** ejecutándose de forma local en los servidores, garantizando la política de "Cero Retención de Datos" (Zero Data Retention) en la nube.
+* **Modelo Especializado (Mistral):** Uso de LLM optimizado para procesamiento en español nativo, sin dependencias de APIs pagas de terceros.
+* **Asesor Agrícola Virtual:** Chatbot interactivo condicionado mediante *System Prompts* para actuar como extensionista agrícola, entregando respuestas accionables, precisas y sin jerga técnica.
+* **Enrutamiento Dinámico:** Preparación del sistema para adaptar el comportamiento de la IA según el rol del usuario (Productor vs. Administrador).
+
+### 🛠 Mejoras Técnicas y Solución de Bugs
+* **Restauración de Lector PDF:** Se consolidó el bypass de seguridad en `ModuloTributario` usando `expo-file-system/legacy` y `expo-sharing` para forzar la lectura nativa de documentos sin bloqueos de Android.
+* **Depuración de Caché TypeScript:** Resolución de problemas de rastreo de módulos y enrutamiento en `App.tsx` al enlazar nuevas pantallas.
+
+---
+**🔜 Próximos Pasos (Arquitectura Backend):**
+1. Definición de entidades y despliegue del servidor en **NestJS**.
+2. Estructuración de la base de datos SQL para persistencia de productores y transacciones.
+3. Evaluación de lineamientos de infraestructura para despliegue en servidores de la Universidad Tecnológica de Pereira (UTP).
