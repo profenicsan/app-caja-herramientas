@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProductoresModule } from './productores/productores.module';
 
 @Module({
   imports: [
@@ -11,12 +10,11 @@ import { ProductoresModule } from './productores/productores.module';
       host: 'localhost',
       port: 5432,
       username: 'admin_asociacion',
-      password: 'Password123',
-      database: 'db_asociacion',
+      password: 'Password123', 
+      database: 'db_asociacion', 
       autoLoadEntities: true,
       synchronize: false,
     }),
-    ProductoresModule,
   ],
   controllers: [AppController],
   providers: [AppService],

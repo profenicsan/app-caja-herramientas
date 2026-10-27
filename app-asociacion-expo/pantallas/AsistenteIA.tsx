@@ -28,7 +28,7 @@ export default function AsistenteIA() {
   // Emulador Android usa 10.0.2.2. Web usa localhost. Celular físico requiere tu IP de WiFi.
   const OLLAMA_URL = Platform.OS === 'android' ? 'http://10.0.2.2:11434/api/chat' : 'http://localhost:11434/api/chat';
 
-  // EL CEREBRO DE LA IA: Aquí le damos su personalidad y reglas
+  // EL CEREBRO DE LA IA:
   const SYSTEM_PROMPT = `
     Eres el Asistente Técnico Agrícola oficial de AgroAsoc, respaldado por la EPSEA.
     Tu objetivo es ayudar a los agricultores en su trabajo diario en la finca.
