@@ -33,12 +33,12 @@ El enrutamiento está centralizado en `lib/main.dart` utilizando el sistema de n
 flutter clean
 flutter pub get
 
-**2. Ejecución en entorno de desarrollo web:
+**2. Ejecución en entorno de desarrollo web:**
 
 flutter run -d web-server
 
-**3. Compilación para Producción (Web)
+**3. Compilación para Producción (Web)**
 flutter build web
 
-**Desarrollo:
+**Desarrollo:**
 Nicolás Sánchez Rojas
