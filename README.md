@@ -34,10 +34,11 @@ flutter clean
 flutter pub get
 
 **2. Ejecución en entorno de desarrollo web:**
-
+```bash
 flutter run -d web-server
 
 **3. Compilación para Producción (Web)**
+```bash
 flutter build web
 
 **Desarrollo:**

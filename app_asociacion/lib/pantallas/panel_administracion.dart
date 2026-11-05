@@ -29,14 +29,14 @@ class PanelAdministracionScreen extends StatelessWidget {
                 // OPCIONES DEL MENÚ
                 _construirItemMenu(FontAwesomeIcons.building, 'Perfil Asociación', context, '/perfil_asociacion'),
                 _construirItemMenu(FontAwesomeIcons.users, 'Productores', context, '/productores'),
-                _construirItemMenu(FontAwesomeIcons.tractor, 'Inventario Productivo', context, null),
+                _construirItemMenu(FontAwesomeIcons.tractor, 'Inventario Productivo', context, '/inventario_productivo'),
                 _construirItemMenu(FontAwesomeIcons.fileInvoiceDollar, 'Gestión Contable', context, '/transacciones_costos'),
-                _construirItemMenu(FontAwesomeIcons.bullhorn, 'Mercadeo', context, null),
+                _construirItemMenu(FontAwesomeIcons.buildingColumns, 'Bóveda y Legal DIAN', context, '/modulo_tributario_admin'),
                 
                 const Spacer(),
                 
                 // OPCIONES INFERIORES
-                _construirItemMenu(FontAwesomeIcons.headset, 'Soporte', context, null),
+                _construirItemMenu(FontAwesomeIcons.headset, 'Soporte', context, '/soporte'),
                 _construirItemMenu(FontAwesomeIcons.rightFromBracket, 'Salir', context, '/login', esSalida: true),
                 const SizedBox(height: 20),
               ],
@@ -61,7 +61,7 @@ class PanelAdministracionScreen extends StatelessWidget {
                       const SizedBox(width: 15),
                       IconButton(
                         icon: const FaIcon(FontAwesomeIcons.bell, color: Color(0xFF00615C)),
-                        onPressed: () {},
+                        onPressed: () => Navigator.pushNamed(context, '/avisos_admin'), 
                       ),
                     ],
                   ),
@@ -114,7 +114,7 @@ class PanelAdministracionScreen extends StatelessWidget {
     );
   }
 
-  // COMPONENTE: Ítems del menú lateral (Usa dynamic para el ícono)
+  // COMPONENTE: Ítems del menú lateral
   Widget _construirItemMenu(dynamic icono, String titulo, BuildContext context, String? ruta, {bool esSalida = false}) {
     return InkWell(
       onTap: () {
@@ -124,6 +124,14 @@ class PanelAdministracionScreen extends StatelessWidget {
           } else {
             Navigator.pushNamed(context, ruta);
           }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Módulo en desarrollo'),
+              backgroundColor: Color(0xFF00615C),
+              duration: Duration(seconds: 1),
+            ),
+          );
         }
       },
       child: Padding(
